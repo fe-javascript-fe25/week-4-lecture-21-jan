@@ -45,10 +45,180 @@ function pokedexSetup() {
 
     const pokedexRef = document.querySelector('#pokedex');
 
-    const card = createCard(pokemons[0]);
+    for(let pokemon of pokemons) {
+        const card = createCard(pokemon);
+        pokedexRef.appendChild(card);
+    }
 }
 
 function createCard(pokemon) {
     log('createCard()');
     log(pokemon);
+
+    const cardRef = document.createElement('article');
+    cardRef.classList.add('card');
+
+    const cardTemplate = `
+        <div class="card__top">
+            <img
+                src="${pokemon.image}"
+                alt="${pokemon.name}"
+                class="card__image"
+                style="background-color: ${pokemon.type[0].color};"
+            />
+            <span class="card__index">${getIndexString(pokemon.id)}</span>
+        </div>
+        <div class="card__middle">
+            <h3 class="card__name">${pokemon.name}</h3>
+            <h4 class="card__type">${getTypeString(pokemon.type)}</h4>
+        </div>
+        <div class="card__bottom">
+            <p class="card__stat">Attack: ${pokemon.stats.attack}</p>
+            <p class="card__stat">Defense: ${pokemon.stats.defense}</p>
+            <p class="card__stat">Sp. Attack: ${pokemon.stats.specialAttack}</p>
+            <p class="card__stat">Sp. Defense: ${pokemon.stats.specialDefense}</p>
+            <p class="card__stat">HP: ${pokemon.stats.hp}</p>
+            <p class="card__stat">Speed: ${pokemon.stats.speed}</p>
+            <p class="card__stat card__stat--span-two">
+                Total: ${pokemon.stats.total}
+            </p>
+        </div>
+    `;
+
+    cardRef.innerHTML = cardTemplate;
+
+    // let divRef = document.createElement('div');
+    // divRef.classList.add('card__top');
+    // cardRef.appendChild(divRef);
+
+    // const image = createImage(pokemon);
+    // divRef.appendChild(image);
+
+    // const index = createIndex(pokemon.id);
+    // divRef.appendChild(index);
+
+    // divRef = document.createElement('div');
+    // divRef.classList.add('card__middle');
+    // cardRef.appendChild(divRef);
+
+    // const name = createName(pokemon.name);
+    // divRef.appendChild(name);
+
+    // const type = createType(pokemon.type);
+    // divRef.appendChild(type);
+
+    // divRef = document.createElement('div');
+    // divRef.classList.add('card__bottom');
+    // cardRef.appendChild(divRef);
+
+    // let stat = createStat('Attack', pokemon.stats.attack, false);
+    // divRef.appendChild(stat);
+
+    // stat = createStat('Defense', pokemon.stats.defense, false);
+    // divRef.appendChild(stat);
+
+    // stat = createStat('Sp. Attack', pokemon.stats.specialAttack, false);
+    // divRef.appendChild(stat);
+
+    // stat = createStat('Sp. Defense', pokemon.stats.specialDefense, false);
+    // divRef.appendChild(stat);
+
+    // stat = createStat('HP', pokemon.stats.hp, false);
+    // divRef.appendChild(stat);
+
+    // stat = createStat('Speed', pokemon.stats.speed, false);
+    // divRef.appendChild(stat);
+
+    // stat = createStat('Total', pokemon.stats.total, true);
+    // divRef.appendChild(stat);
+
+    return cardRef;
 }
+
+function createImage(pokemon) {
+    const imgRef = document.createElement('img');
+    imgRef.src = pokemon.image;
+    imgRef.alt = pokemon.name;
+    imgRef.style.backgroundColor = pokemon.type[0].color;
+    imgRef.classList.add('card__image');
+    return imgRef;
+}
+
+function createIndex(id) {
+    const indexRef = document.createElement('span');
+    indexRef.classList.add('card__index');
+    indexRef.textContent = getIndexString(id);
+
+    return indexRef;
+}
+
+function getIndexString(id) {
+    let indexString = '';
+    if(id < 10) {
+        indexString = '#00' + id;
+    } else if(id >= 10 && id < 100) {
+        indexString = '#0' + id;
+    } else {
+        indexString = '#' + id;
+    }
+    return indexString;
+}
+
+function createName(name) {
+    const nameRef = document.createElement('h3');
+    nameRef.classList.add('card__name');
+    nameRef.textContent = name;
+    return nameRef;
+}
+
+function createType(type) {
+    const typeRef = document.createElement('h4');
+    typeRef.classList.add('card__type');
+    typeRef.textContent = getTypeString(type);
+
+    return typeRef;
+}
+
+function getTypeString(type) {
+    if(type.length === 1) {
+        return type[0].name;
+    } else {
+        return `${type[0].name} / ${type[1].name}`;
+    }
+}
+
+function createStat(stat, value, modifier) {
+    const statRef = document.createElement('p');
+    statRef.classList.add('card__stat');
+    if(modifier) statRef.classList.add('card__stat--span-two');
+    statRef.textContent = `${stat}: ${value}`;
+    return statRef;
+}
+
+/*
+<article class="card">
+    <div class="card__top">
+        <img
+            src="https://assets.pokemon.com/assets/cms2/img/pokedex/full/001.png"
+            alt="Bulbasaur"
+            class="card__image"
+        />
+        <span class="card__index">#001</span>
+    </div>
+    <div class="card__middle">
+        <h3 class="card__name">Bulbasaur</h3>
+        <h4 class="card__type">Grass / Poison</h4>
+    </div>
+    <div class="card__bottom">
+        <p class="card__stat">Attack: 49</p>
+        <p class="card__stat">Defense: 49</p>
+        <p class="card__stat">Sp. Attack: 65</p>
+        <p class="card__stat">Sp. Defense: 65</p>
+        <p class="card__stat">HP: 45</p>
+        <p class="card__stat">Speed: 45</p>
+        <p class="card__stat card__stat--span-two">
+            Total: 318
+        </p>
+    </div>
+</article>
+*/
