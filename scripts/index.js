@@ -19,6 +19,8 @@ function pageSetup() {
         ref.addEventListener('click', displayActiveSection);
     }
     pokedexSetup();
+    generatorSetup();
+    searchSetup();
 }
 
 function displayActiveSection(event) {
@@ -51,10 +53,84 @@ function pokedexSetup() {
     }
 }
 
-function createCard(pokemon) {
-    log('createCard()');
-    log(pokemon);
+function generatorSetup() {
+    log('generatorSetup()');
 
+    document.querySelector('#generateBtn').addEventListener('click', generatePokemon);
+}
+
+function generatePokemon(event) {
+    event.preventDefault();
+    log('generatePokemon()');
+
+    const type = document.querySelector('#pokemonTypes').value;
+    let teamSize = Number(document.querySelector('#teamSize').value);
+
+    if(teamSize < 1 || teamSize > 151) teamSize = 6;
+
+    const pokemonsTemp = [...pokemons];
+    const team = [];
+
+    if(type === '') {
+        for(let i = 0; i < teamSize; i++) {
+            const randomIndex = Math.floor(Math.random() * pokemonsTemp.length);
+            const randomPokemon = pokemonsTemp.splice(randomIndex, 1)[0];
+            team.push(randomPokemon);
+        }
+    } else {
+        const filtered = pokemonsTemp.filter(pokemon => {
+            for(let pokemonType of pokemon.type) {
+                if(pokemonType.name.toLowerCase() === type.toLowerCase()) {
+                    return true;
+                }
+            } 
+            return false;
+        });
+
+        if(filtered.length < teamSize) {
+            teamSize = filtered.length;
+        }
+
+        for(let i = 0; i < teamSize; i++) {
+            const randomIndex = Math.floor(Math.random() * filtered.length);
+            const randomPokemon = filtered.splice(randomIndex, 1)[0];
+            team.push(randomPokemon);
+        }
+    }
+
+    const generateRef = document.querySelector('#generate');
+    generateRef.innerHTML = '';
+
+    for(let pokemon of team) {
+        const card = createCard(pokemon);
+        generateRef.appendChild(card);
+    }
+}
+
+function searchSetup() {
+    log('searchSetup()');
+
+    document.querySelector('#searchBtn').addEventListener('click', searchPokemon);
+}
+
+function searchPokemon(event) {
+    event.preventDefault();
+    log('searchPokemon()');
+
+    let query = document.querySelector('#pokemonName').value.toLowerCase().trim();
+    let results = pokemons.filter(pokemon => pokemon.name.toLowerCase().includes(query));
+    log(results);
+
+    const searchRef = document.querySelector('#search');
+    searchRef.innerHTML = '';
+
+    for(let pokemon of results) {
+        const card = createCard(pokemon);
+        searchRef.appendChild(card);
+    }
+}
+
+function createCard(pokemon) {
     const cardRef = document.createElement('article');
     cardRef.classList.add('card');
 
